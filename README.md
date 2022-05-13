@@ -35,15 +35,15 @@ pip install Azure-Devops-Spark
 
 - [charset-normalizer >= 2.0.12](https://pypi.org/project/charset-normalizer/)
 
-- [idna >= 3.3](pip install idna)
+- [idna >= 3.3](https://pypi.org/project/idna/)
 
-- [requests >= 2.27.1](pip install requests)
+- [requests >= 2.27.1](https://pypi.org/project/requests/)
 
-- [urllib3 >= 1.26.9](pip install urllib3)
+- [urllib3 >= 1.26.9](https://pypi.org/project/urllib3/)
 
-- [python-dateutil >= 2.8.2](pip install python-dateutil)
+- [python-dateutil >= 2.8.2](https://pypi.org/project/python-dateutil/)
 
-- [pyspark>=3.2.1](pip install pyspark) 
+- [pyspark>=3.2.1](https://pypi.org/project/pyspark/) 
 
 
 
@@ -58,7 +58,9 @@ from AzureDevopsSpark import Azure, Agile
 from pyspark.sql.functions import datediff #use in agile metrics
 
 devops = Azure('ORGANIZATION', 'PROJECT', 'TOKEN')
+```
 
+```python
 ## Filter columns
 devops.filter_columns([
     'IterationPath', 'Id', 'State', 'WorkItemType', 'CreatedDate', 'ClosedDate', 'Iteration_Start_Date', 'Iteration_End_Date'
@@ -77,7 +79,9 @@ df_members = devops.all_members().df
 df_backlog = devops.all_backlog().df
 df_iterations = devops.all_iterations().df
 df_items = devops.all_items().df
+```
 
+```python
 ## Agile Metrics
 agile = Agile()
 
@@ -96,8 +100,6 @@ lead_time = lead_time = agil.avg(
     filters={'WorkItemType': 'Task', 'State': 'Closed'} # Custom filters for metric.
 ).df
 ```
-
-
 
 ## Author
 
