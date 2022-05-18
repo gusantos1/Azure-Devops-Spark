@@ -10,8 +10,7 @@ It runs on Spark, enabling all the features the technology makes available.
 ## Main Features
 
 - Get authenticated quickly and simply.
-
-- All columns of the project are automatically mapped, just the ones you want to form your dataframes with.
+- All columns in the project are mapped automatically, use the filter_columns method to select only the required columns.
 - SparkSession already created in spark variable.
 - Get all your organization's backlogs with the method **all_backlog**.
 - Get all your organization's teams with the method **all_teams**.
