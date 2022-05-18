@@ -12,14 +12,14 @@ It runs on Spark, enabling all the features the technology makes available.
 - Get authenticated quickly and simply.
 
 - All columns of the project are automatically mapped, just the ones you want to form your dataframes with.
-- Keep having the freedom to configure your SparkSession.
+- SparkSession already created in spark variable.
 - Get all your organization's backlogs with the method **all_backlog**.
 - Get all your organization's teams with the method **all_teams**.
 - Get all your organization's iterations with the method **all_iterations**.
 - Get all your organization's members with the method **all_members**.
 - Get all your organization's items with the method **all_items**.
 - Get all your organization's tags with the method **all_tags**.
-- Explore the simplicity of agile methods to build powerful metrics for your organization.
+- Explore the simplicity of Agile class to build powerful metrics for your organization.
 
 ## How to install?
 
@@ -88,7 +88,7 @@ lead_time = lead_time = agil.avg(
 
 ## How it works?
 
-<img src="https://raw.githubusercontent.com/gusantos1/icons/e732457018296bb78aad166d31a2b7bb7c8b7af4/flow-AzureDevopsSpark.svg">
+<img src="https://raw.githubusercontent.com/gusantos1/icons/cf8a55dd87fe755681a7cd69d83db26a4c30d116/flow-AzureDevopsSpark.svg">
 
 ## Azure Methods
 
