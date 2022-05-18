@@ -12,7 +12,7 @@ It runs on Spark, enabling all the features the technology makes available.
 - Get authenticated quickly and simply.
 
 - All columns of the project are automatically mapped, just the ones you want to form your dataframes with.
-- Keep having the freedom to configure your Sparksession.
+- Keep having the freedom to configure your SparkSession.
 - Get all your organization's backlogs with the method **all_backlog**.
 - Get all your organization's teams with the method **all_teams**.
 - Get all your organization's iterations with the method **all_iterations**.
@@ -21,31 +21,11 @@ It runs on Spark, enabling all the features the technology makes available.
 - Get all your organization's tags with the method **all_tags**.
 - Explore the simplicity of agile methods to build powerful metrics for your organization.
 
-
-
 ## How to install?
 
 ```bash
 pip install Azure-Devops-Spark
 ```
-
-## Dependencies
-
-- [certifi >= 2021.10.8](https://pypi.org/project/certifi/)
-
-- [charset-normalizer >= 2.0.12](https://pypi.org/project/charset-normalizer/)
-
-- [idna >= 3.3](https://pypi.org/project/idna/)
-
-- [requests >= 2.27.1](https://pypi.org/project/requests/)
-
-- [urllib3 >= 1.26.9](https://pypi.org/project/urllib3/)
-
-- [python-dateutil >= 2.8.2](https://pypi.org/project/python-dateutil/)
-
-- [pyspark>=3.2.1](https://pypi.org/project/pyspark/) 
-
-
 
 ## The Code
 
@@ -63,7 +43,8 @@ devops = Azure('ORGANIZATION', 'PROJECT', 'TOKEN')
 ```python
 ## Filter columns
 devops.filter_columns([
-    'IterationPath', 'Id', 'State', 'WorkItemType', 'CreatedDate', 'ClosedDate', 'Iteration_Start_Date', 'Iteration_End_Date'
+    'IterationPath', 'Id', 'State', 'WorkItemType',
+    'CreatedDate', 'ClosedDate', 'Iteration_Start_Date', 'Iteration_End_Date'
 ])
 
 ## Basic data structures
@@ -101,9 +82,177 @@ lead_time = lead_time = agil.avg(
 ).df
 ```
 
+#### In this link you will find a notebook with examples of applications using the library's methods.
+
+
+
+## How it works?
+
+<img src="https://raw.githubusercontent.com/gusantos1/icons/e732457018296bb78aad166d31a2b7bb7c8b7af4/flow-AzureDevopsSpark.svg">
+
+## Azure Methods
+
+All public methods of this class return a Response object containing data and df attributes, data is Python basic data structure, and df is PySpark dataframe structure.
+
+- all_backlog
+
+  ###### Returns all backlog work items within a project.
+
+  ```python
+  all_backlog(self)
+  ```
+
+- filter_columns
+
+  ###### Mapped columns that are not in the list passed as an argument will be excluded.
+
+  ```python
+  filter_columns(self, only: List[str])
+  ```
+
+- all_iterations
+
+  ###### Returns all iterations in the project.
+
+  ```python
+  all_iterations(self, only: List[str] = None, exclude: List[str] = None)
+  ```
+
+- all_items
+
+  ###### Returns all work items in the project. `It is possible to filter by SQL in the query parameter set to None`. Ex: Where [System.WorkItemType] = 'Task' AND [System.AssignedTo] = 'Guilherme Silva'. Returns all tasks associated with Guilherme Silva.
+
+  ```python
+  all_items(self, query:str = None, params_endpoint:str = None)
+  ```
+
+- all_members
+
+  ###### Returns all members in the project.
+
+  ```python
+  all_members(self, only: List[str] = None, exclude: List[str] = None, params_endpoint: str = None)
+  ```
+
+- all_tags
+
+  ###### Returns all tags registered in the project.
+
+  ```python
+  all_tags(self)
+  ```
+
+- all_teams
+
+  ###### Returns all teams registered in the project.
+
+  ```python
+  all_teams(self, only: List[str] = None, exclude: List[str] = None, params_endpoint:str = None)	
+  ```
+
+## Response Methods
+
+- show
+
+  ###### Show a spark dataframe.
+
+  ```python
+  show(self, select: List[str] = None, truncate: bool = True)
+  ```
+
+- data
+
+  ###### Returns data in its basic structure
+
+  ```python
+  data(self)
+  ```
+
+- df
+
+  ###### Returns a spark dataframe
+
+  ```python
+  df(self)
+  ```
+
+- display
+
+  ###### Shows a spark dataframe in detail.
+
+  ```python
+  display(self)
+  ```
+
+- table
+
+  ###### Creates a table on the cluster with delta format and overwrite mode by default.
+
+  ```python
+  table(self, database: str, table: str, format = 'delta', mode = 'overwrite')
+  ```
+
+- parquet
+
+  ###### Creates parquet files in path and overwrite mode by default.
+
+  ```python
+  parquet(self, path: str, mode: str = 'overwrite', partitionBy: str = None, compression: str = None)
+  ```
+
+- view
+
+  Creates a table view.
+
+  ```python
+  view(self, name: str)
+  ```
+
+  
+
+## Agile Methods
+
+The Agile class receives any PySpark dataframe, it is formed by aggregation methods and types of filters that make customization flexible to apply agility metrics. Agile doesn't have, for example, a cycle time method, but it is possible to create from the avg method with your customizations.
+
+All public methods of this class return a Detail object containing detail and df attributes, detail is the dataframe version before aggregation and df is the dataframe already aggregated.
+
+- avg, count, max, min, sum
+
+  ###### After filtering a dataframe, it performs the operation on the column passed as an argument in ref.
+
+  ```python
+  avg(self, df, ref: Union[str, list], iteration_path: str, new: str, literal_filter: List[str] = None, between_date: Dict[str, str] = None, group_by: List[str] = None, **filters)
+  ```
+
+- multiple_join
+
+  ###### Receives a list of dataframes and merges using the same column name between them.
+
+  ```python
+  multiple_join(self, dfs: list, on: List[str], how: str = 'left')
+  ```
+
+
+
+## Dependencies
+
+[certifi >= 2021.10.8](https://pypi.org/project/certifi/)
+
+[charset-normalizer >= 2.0.12](https://pypi.org/project/charset-normalizer/)
+
+[idna >= 3.3](https://pypi.org/project/idna/)
+
+[requests >= 2.27.1](https://pypi.org/project/requests/)
+
+[urllib3 >= 1.26.9](https://pypi.org/project/urllib3/)
+
+[python-dateutil >= 2.8.2](https://pypi.org/project/python-dateutil/)
+
+[pyspark>=3.2.1](https://pypi.org/project/pyspark/) 
+
 ## Author
 
-The Azure-Devops-Spark library was written by Guilherme Santos < gusantos.ok@gmail.com > in 2022.
+The Azure-Devops-Spark library was written by Guilherme Silva < https://www.linkedin.com/in/gusantosdev/ > in 2022.
 
 ## License
 
