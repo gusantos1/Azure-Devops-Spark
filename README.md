@@ -1,16 +1,17 @@
-## Azure Devops Spark:  A productive library to extract data from Azure Devops and apply agility metrics.
+## Azure Devops Spark:  A productive library to extract data from Azure Devops and apply agile metrics.
 
 
 
 ## What is it?
 
-Azure Devops Spark is a Python package that provides most productive way to extract data from Azure Devops and build agility metrics.
+Azure Devops Spark is a Python package that provides the most productive way to extract data from Azure Devops and build agile metrics.
 It runs on Spark, enabling all the features the technology makes available.
 
 ## Main Features
 
 - Get authenticated quickly and simply.
-- All columns in the project are mapped automatically, use the filter_columns method to select only the required columns.
+
+- All columns of the project are automatically mapped, just the ones you want to form your dataframes with.
 - SparkSession already created in spark variable.
 - Get all your organization's backlogs with the method **all_backlog**.
 - Get all your organization's teams with the method **all_teams**.
@@ -25,6 +26,8 @@ It runs on Spark, enabling all the features the technology makes available.
 ```bash
 pip install Azure-Devops-Spark
 ```
+
+**[For local use it is necessary to install pyspark>=3.2.1 and also configure the necessary environment variables. If you don't know, click here.](https://github.com/gusantos1/como_instalar_spark)**
 
 ## The Code
 
@@ -87,7 +90,7 @@ lead_time = lead_time = agil.avg(
 
 ## How it works?
 
-<img src="https://raw.githubusercontent.com/gusantos1/icons/cf8a55dd87fe755681a7cd69d83db26a4c30d116/flow-AzureDevopsSpark.svg">
+<img src="https://github.com/gusantos1/icons/blob/9200dc6c7238fc8f2fac110b015c497786c64354/flow-AzureDevopsSpark.png?raw=true">
 
 ## Azure Methods
 
@@ -211,7 +214,7 @@ All public methods of this class return a Response object containing data and df
 
 ## Agile Methods
 
-The Agile class receives any PySpark dataframe, it is formed by aggregation methods and types of filters that make customization flexible to apply agility metrics. Agile doesn't have, for example, a cycle time method, but it is possible to create from the avg method with your customizations.
+The Agile class receives any PySpark dataframe, it is formed by aggregation methods and types of filters that make customization flexible to apply agile metrics. Agile doesn't have, for example, a cycle time method, but it is possible to create from the avg method with your customizations.
 
 All public methods of this class return a Detail object containing detail and df attributes, detail is the dataframe version before aggregation and df is the dataframe already aggregated.
 
@@ -223,6 +226,14 @@ All public methods of this class return a Detail object containing detail and df
   avg(self, df, ref: Union[str, list], iteration_path: str, new: str, literal_filter: List[str] = None, between_date: Dict[str, str] = None, group_by: List[str] = None, **filters)
   ```
 
+- custom
+
+  ###### Agile.custom takes two PySpark dataframes and the information needed to merge and apply an operation between two columns. Supported Operators: is_, is_not, add, and_, floordiv, mod, mul, pow, sub e ceil (Pyspark).
+
+  ```python
+  custom(self, df_left, def_right, left: str, right: str, how: str, op: operator, left_ref: str, right_ref: str, new: str)
+  ```
+  
 - multiple_join
 
   ###### Receives a list of dataframes and merges using the same column name between them.
@@ -247,11 +258,11 @@ All public methods of this class return a Detail object containing detail and df
 
 [python-dateutil >= 2.8.2](https://pypi.org/project/python-dateutil/)
 
-[pyspark>=3.2.1](https://pypi.org/project/pyspark/) 
-
 ## Author
 
 The Azure-Devops-Spark library was written by Guilherme Silva < https://www.linkedin.com/in/gusantosdev/ > in 2022.
+
+https://github.com/gusantos1/Azure-Devops-Spark
 
 ## License
 
