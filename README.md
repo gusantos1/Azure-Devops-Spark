@@ -84,9 +84,7 @@ lead_time = lead_time = agil.avg(
 ).df
 ```
 
-#### In this link you will find a notebook with examples of applications using the library's methods.
-
-
+[**In this link you will find a notebook with examples of applications using the library's methods.**](https://github.com/gusantos1/Azure-Devops-Spark/tree/main/Examples)
 
 ## How it works?
 
