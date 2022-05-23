@@ -36,7 +36,7 @@ The code and issue tracker are hosted on GitHub: https://github.com/gusantos1/az
 ## Quick example
 
 ```python
-from AzureDevopsSpark import Azure, Agile
+from AzureDevopsPySpark import Azure, Agile
 from pyspark.sql.functions import datediff #use in agile metrics
 
 devops = Azure('ORGANIZATION', 'PROJECT', 'TOKEN')
@@ -84,9 +84,7 @@ lead_time = lead_time = agil.avg(
 ).df
 ```
 
-#### In this link you will find a notebook with examples of applications using the library's methods.
-
-
+[**In this link you will find a notebook with examples of applications using the library's methods.**](https://github.com/gusantos1/azure-devops-pyspark/tree/main/Examples)
 
 ## How it works?
 
@@ -156,7 +154,7 @@ All public methods of this class return a Response object containing data and df
 
 - show
 
-  ###### Show a spark dataframe.
+  ###### Show a pyspark dataframe.
 
   ```python
   show(self, select: List[str] = None, truncate: bool = True)
@@ -172,7 +170,7 @@ All public methods of this class return a Response object containing data and df
 
 - df
 
-  ###### Returns a spark dataframe
+  ###### Returns a pyspark dataframe
 
   ```python
   df(self)
@@ -220,7 +218,7 @@ All public methods of this class return a Detail object containing detail and df
 
 - custom
 
-  ###### Agile.custom takes two PySpark dataframes and the information needed to merge and apply an operation between two columns. Supported Operators: is_, is_not, add, and_, floordiv, mod, mul, pow, sub e ceil (Pyspark).
+  ###### Agile.custom receives two PySpark dataframes and the information needed to merge and the signature string of a Python operator that will do the operation between the two columns. Supported operators: is_, is_not, add, and_, truediv, floordiv, mod, mul, pow, sub and ceil (Pyspark).
 
   ```python
   custom(self, df_left, def_right, left: str, right: str, how: str, op: operator, left_ref: str, right_ref: str, new: str)
@@ -252,9 +250,9 @@ All public methods of this class return a Detail object containing detail and df
 
 ## Author
 
-The Azure-Devops-PySpark library was written by Guilherme Silva < https://www.linkedin.com/in/gusantosdev/ > in 2022.
+The azure-devops-pyspark library was written by Guilherme Silva < https://www.linkedin.com/in/gusantosdev/ > in 2022.
 
-https://github.com/gusantos1/Azure-Devops-Spark
+https://github.com/gusantos1/azure-devops-pyspark
 
 ## License
 
