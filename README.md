@@ -1,11 +1,11 @@
-## Azure Devops Spark:  A productive library to extract data from Azure Devops and apply agile metrics.
+## Azure Devops PySpark:  A productive library to extract data from Azure Devops and apply agile metrics.
 
 
 
 ## What is it?
 
-Azure Devops Spark is a Python package that provides the most productive way to extract data from Azure Devops and build agile metrics.
-It runs on Spark, enabling all the features the technology makes available.
+Azure Devops PySpark is a Python package that provides the most productive way to extract data from Azure Devops and build agile metrics.
+It runs on PySpark, enabling all the features the technology makes available.
 
 ## Main Features
 
@@ -24,14 +24,14 @@ It runs on Spark, enabling all the features the technology makes available.
 ## How to install?
 
 ```bash
-pip install Azure-Devops-Spark
+pip install azure-devops-pyspark
 ```
 
 **[For local use it is necessary to install pyspark>=3.2.1 and also configure the necessary environment variables. If you don't know, click here.](https://github.com/gusantos1/como_instalar_spark)**
 
 ## The Code
 
-The code and issue tracker are hosted on GitHub: https://github.com/gusantos1/Azure-Devops-Spark
+The code and issue tracker are hosted on GitHub: https://github.com/gusantos1/azure-devops-pyspark
 
 ## Quick example
 
@@ -84,7 +84,9 @@ lead_time = lead_time = agil.avg(
 ).df
 ```
 
-[**In this link you will find a notebook with examples of applications using the library's methods.**](https://github.com/gusantos1/Azure-Devops-Spark/tree/main/Examples)
+#### In this link you will find a notebook with examples of applications using the library's methods.
+
+
 
 ## How it works?
 
@@ -176,14 +178,6 @@ All public methods of this class return a Response object containing data and df
   df(self)
   ```
 
-- display
-
-  ###### Shows a spark dataframe in detail.
-
-  ```python
-  display(self)
-  ```
-
 - table
 
   ###### Creates a table on the cluster with delta format and overwrite mode by default.
@@ -258,7 +252,7 @@ All public methods of this class return a Detail object containing detail and df
 
 ## Author
 
-The Azure-Devops-Spark library was written by Guilherme Silva < https://www.linkedin.com/in/gusantosdev/ > in 2022.
+The Azure-Devops-PySpark library was written by Guilherme Silva < https://www.linkedin.com/in/gusantosdev/ > in 2022.
 
 https://github.com/gusantos1/Azure-Devops-Spark
 
