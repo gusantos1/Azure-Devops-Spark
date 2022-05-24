@@ -74,7 +74,7 @@ df_agil = df.items.join(df_iterations, 'IterationPath')
 ## Metrics
 
 ## Average time between CreatedDate and ClosedDate of items in the last 90 days.
-lead_time = lead_time = agil.avg(
+lead_time = lead_time = agile.avg(
     df=df_agil,
     ref=[datediff, 'ClosedDate', 'CreatedDate'], # The day difference between the CreatedDate and ClosedDate of each item.
     iteration_path='IterationPath', # GroupBy.
