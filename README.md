@@ -11,7 +11,7 @@ It runs on PySpark, enabling all the features the technology makes available.
 
 - Get authenticated quickly and simply.
 
-- All columns of the project are automatically mapped, just the ones you want to form your dataframes with.
+- All columns of the project are automatically mapped, use the filter_columns method to filter only those you want to form your dataframes with..
 - SparkSession already created in spark variable.
 - Get all your organization's backlogs with the method **all_backlog**.
 - Get all your organization's teams with the method **all_teams**.
