@@ -251,4 +251,4 @@ class Azure:
                 err = (f'{status} - {http_status.get(str(status))}')
                 raise Exception(err)
         except Exception as e:
-            return e
+            raise e
