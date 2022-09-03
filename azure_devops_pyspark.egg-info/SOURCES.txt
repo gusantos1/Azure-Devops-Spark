@@ -1,0 +1,15 @@
+LICENSE.txt
+README.md
+setup.cfg
+setup.py
+AzureDevopsPySpark/__init__.py
+AzureDevopsPySpark/agile.py
+AzureDevopsPySpark/azure.py
+AzureDevopsPySpark/endpoints.py
+AzureDevopsPySpark/process.py
+AzureDevopsPySpark/schemas.py
+azure_devops_pyspark.egg-info/PKG-INFO
+azure_devops_pyspark.egg-info/SOURCES.txt
+azure_devops_pyspark.egg-info/dependency_links.txt
+azure_devops_pyspark.egg-info/requires.txt
+azure_devops_pyspark.egg-info/top_level.txt

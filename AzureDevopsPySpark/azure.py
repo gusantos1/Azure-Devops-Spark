@@ -61,7 +61,7 @@ class Azure:
             Returns all backlog work items within a project.
         """
         items = []
-        squads = [item['Squad'] for item in self.all_teams().data]
+        squads = [item['Squad'] for item in self.all_teams()]
         for squad in squads:
             endpoint = Endpoint.team_backlog(self._organization, self._project, squad)
             response = self.__get(endpoint)
@@ -96,7 +96,7 @@ class Azure:
         """
             Returns all iterations in the project.
         """
-        teams = [item['Squad'] for item in self.all_teams().data] if not only else only
+        teams = [item['Squad'] for item in self.all_teams()] if not only else only
         remove = [teams.remove(squad) for squad in exclude] if exclude else None
         iteration_matrix = []
         for squad in teams:
@@ -114,7 +114,7 @@ class Azure:
         """
             Returns all members in the project.
         """
-        teams = self.all_teams().data if not only else [{'Squad': item} for item in only]
+        teams = self.all_teams() if not only else [{'Squad': item} for item in only]
         remove = [teams.remove(item) for item in teams if item['Squad'] in exclude] if exclude else None
         members_matrix = []
         

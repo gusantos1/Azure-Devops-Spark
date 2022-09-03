@@ -49,19 +49,12 @@ devops.filter_columns([
     'CreatedDate', 'ClosedDate', 'Iteration_Start_Date', 'Iteration_End_Date'
 ])
 
-## Basic data structures
-df_members = devops.all_members().data
-df_backlog = devops.all_backlog().data
-df_iterations = devops.all_iterations().data
-df_items = devops.all_items().data
-
-## or
 
 ## Pyspark Dataframe data structure
-df_members = devops.all_members().df
-df_backlog = devops.all_backlog().df
-df_iterations = devops.all_iterations().df
-df_items = devops.all_items().df
+df_members = devops.all_members()
+df_backlog = devops.all_backlog()
+df_iterations = devops.all_iterations()
+df_items = devops.all_items()
 ```
 
 ```python
@@ -94,7 +87,7 @@ lead_time = lead_time = agile.avg(
 
 ## Azure Methods
 
-All public methods of this class return a Response object containing data and df attributes, data is Python basic data structure, and df is PySpark dataframe structure.
+All public methods of this class return an object spark dataframe.
 
 - all_backlog
 
@@ -152,57 +145,6 @@ All public methods of this class return a Response object containing data and df
   all_teams(self, only: List[str] = None, exclude: List[str] = None, params_endpoint:str = None)	
   ```
 
-## Response Methods
-
-- show
-
-  ###### Show a spark dataframe.
-
-  ```python
-  show(self, select: List[str] = None, truncate: bool = True)
-  ```
-
-- data
-
-  ###### Returns data in its basic structure
-
-  ```python
-  data(self)
-  ```
-
-- df
-
-  ###### Returns a spark dataframe
-
-  ```python
-  df(self)
-  ```
-
-- table
-
-  ###### Creates a table on the cluster with delta format and overwrite mode by default.
-
-  ```python
-  table(self, database: str, table: str, format = 'delta', mode = 'overwrite')
-  ```
-
-- parquet
-
-  ###### Creates parquet files in path and overwrite mode by default.
-
-  ```python
-  parquet(self, path: str, mode: str = 'overwrite', partitionBy: str = None, compression: str = None)
-  ```
-
-- view
-
-  Creates a table view.
-
-  ```python
-  view(self, name: str)
-  ```
-
-  
 
 ## Agile Methods
 
