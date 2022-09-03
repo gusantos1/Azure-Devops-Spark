@@ -8,7 +8,6 @@ from copy import deepcopy
 from AzureDevopsPySpark.endpoints import *
 from AzureDevopsPySpark.process import *
 from AzureDevopsPySpark.schemas import *
-from AzureDevopsPySpark.response import *
 
 
 class Azure:
@@ -80,7 +79,7 @@ class Azure:
                             items.extend(original)
         self._columns['Backlog'] = StructField("Backlog", StringType(), True)
         SCHEMA_ITEMS = StructType([column for column in self._columns.values()])
-        return Response(items, SCHEMA_ITEMS, self.spark)    
+        return self.spark.createDataFrame(data=[tuple(item.values()) for item in items], schema=SCHEMA_ITEMS)  
 
     def all_teams(self, only: List[str] = None, exclude: List[str] = None, params_endpoint:str = None):
         """
@@ -91,7 +90,7 @@ class Azure:
         clean_response = Process.all_teams(response)
         teams = [item for item in clean_response if item['Squad'] in only] if only else clean_response
         remove = [teams.remove(item) for item in teams if item['Squad'] in exclude] if exclude else None
-        return Response(teams, SCHEMA_ALL_TEAMS, self.spark)
+        return self.spark.createDataFrame(data=[tuple(item.values()) for item in teams], schema=SCHEMA_ALL_TEAMS) 
 
     def all_iterations(self, only: List[str] = None, exclude: List[str] = None):
         """
@@ -109,7 +108,7 @@ class Azure:
             else:
                 print(f'{squad}: does not exist, or you do not have permission to access it.')
 
-        return Response(iteration_matrix, SCHEMA_ITERATIONS, self.spark)
+        return self.spark.createDataFrame(data=[tuple(item.values()) for item in iteration_matrix], schema=SCHEMA_ITERATIONS)
 
     def all_members(self, only: List[str] = None, exclude: List[str] = None, params_endpoint: str = None):
         """
@@ -127,7 +126,7 @@ class Azure:
                 members_matrix.append(clear_response)
 
         members = [member for squad in members_matrix for member in squad]
-        return Response(members, SCHEMA_ALL_MEMBERS, self.spark)
+        return self.spark.createDataFrame(data=[tuple(item.values()) for item in members], schema=SCHEMA_ALL_MEMBERS)
     
     def all_items(self, query:str = None, params_endpoint:str = None):
         """
@@ -152,7 +151,7 @@ class Azure:
             else:
                 break
         SCHEMA_ITEMS = StructType([column for column in self._columns.values()])
-        return Response(matrix, SCHEMA_ITEMS, self.spark)
+        return self.spark.createDataFrame(data=[tuple(item.values()) for item in matrix], schema=SCHEMA_ITEMS)
     
     def all_tags(self):
         """
@@ -161,7 +160,7 @@ class Azure:
         endpoint = Endpoint.tags(self._organization, self._project)
         response = self.__get(endpoint).json()
         clear_response = Process.tags(response)
-        return Response(clear_response, SCHEMA_TAGS, self.spark)
+        return self.spark.createDataFrame(data=[tuple(item.values()) for item in clear_response], schema=SCHEMA_TAGS)
 
     def __mapping_columns(self):
         '''
