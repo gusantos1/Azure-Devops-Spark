@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: azure-devops-pyspark
-Version: 0.0.0.0.3
+Version: 0.0.0.0.4
 Summary: A productive library to extract data from Azure Devops and apply agile metrics.
 Home-page: UNKNOWN
 Author: Guilherme Silva dos Santos
@@ -12,22 +12,49 @@ Description-Content-Type: text/markdown
 License-File: LICENSE.txt
 
 
+## Quick example
+
+```python
 from AzureDevopsSpark import Azure, Agile
 from pyspark.sql.functions import datediff #use in agile metrics
 
-
 devops = Azure('ORGANIZATION', 'PROJECT', 'TOKEN')
+```
+
+```python
+## Filter columns
 devops.filter_columns([
     'IterationPath', 'Id', 'State', 'WorkItemType',
     'CreatedDate', 'ClosedDate', 'Iteration_Start_Date', 'Iteration_End_Date'
-]) # Mapped columns that are not in the list passed as an argument will be excluded.
+])
 
-df_members = devops.all_members() #Returns all members in the project.
-df_backlog = devops.all_backlog() # Returns all backlog work items within a project.
-df_iterations = devops.all_iterations() # Returns all iterations in the project.
-df_tags = devops.all_tags() # Returns all tags registered in the project.
-df_teams = all_teams(). # Returns all teams registered in the project.
-df_items = devops.all_items() # Returns all iterations in the project. It is possible to filter by SQL in the query parameter set to None. 
-Ex: Where [System.WorkItemType] = 'Task' AND [System.AssignedTo] = 'Guilherme Silva'. Returns all tasks associated with Guilherme Silva.
+
+## Pyspark Dataframe data structure
+df_members = devops.all_members()
+df_backlog = devops.all_backlog()
+df_iterations = devops.all_iterations()
+df_items = devops.all_items()
+```
+
+```python
+## Agile Metrics
+agile = Agile()
+
+## A new dataframe
+df_agil = df.items.join(df_iterations, 'IterationPath')
+
+## Metrics
+
+## Average time between CreatedDate and ClosedDate of items in the last 90 days.
+lead_time = lead_time = agile.avg(
+    df=df_agil,
+    ref=[datediff, 'ClosedDate', 'CreatedDate'], # The day difference between the CreatedDate and ClosedDate of each item.
+    iteration_path='IterationPath', # GroupBy.
+    new='LeadTimeDays', # New column name.
+    literal_filter=['ClosedDate >= 90'], # Filtering items from the last 90 days.
+    filters={'WorkItemType': 'Task', 'State': 'Closed'} # Custom filters for metric.
+).df
+```
+
 
 

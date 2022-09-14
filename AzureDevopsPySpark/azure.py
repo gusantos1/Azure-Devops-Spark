@@ -5,6 +5,7 @@ from pyspark.sql import SparkSession
 from typing import List
 from requests import get, post
 from copy import deepcopy
+from array import array
 from AzureDevopsPySpark.endpoints import *
 from AzureDevopsPySpark.process import *
 from AzureDevopsPySpark.schemas import *
@@ -51,7 +52,10 @@ class Azure:
     
     def filter_columns(self, only: List[str]):
         '''
-            Mapped columns that are not in the list passed as an argument will be excluded.
+            `Mapped columns that are not in the list passed as an argument will be excluded.`
+            
+            Ex: 
+                filter_columns( ['AreaPath', 'Id'] ) -> Only AreaPath and Id will be returned.
         '''
         temp = deepcopy(self._columns)
         return [self._columns.pop(item) for item in temp.keys() if item not in only]
@@ -83,7 +87,11 @@ class Azure:
 
     def all_teams(self, only: List[str] = None, exclude: List[str] = None, params_endpoint:str = None):
         """
-            Returns all teams registered in the project.
+            `Returns all teams registered in the project.`
+
+            :param only: all_teams(only = ['Squad 1', 'Squad 2']) -> Only Squad 1 and Squad 2 will be returned.
+            :param exclude: all_teams(exclude = ['Squad 3']) -> Squad 3 will not be returned.
+            :param only and exclude:  all_teams(['Squad 1', 'Squad 2', ...], ['Squad 3']) -> The squads in only will be returned and Squad 3 will not be returned.
         """
         endpoint = Endpoint.all_teams(self._organization, params_endpoint)
         response = self.__get(endpoint).json()
@@ -94,7 +102,11 @@ class Azure:
 
     def all_iterations(self, only: List[str] = None, exclude: List[str] = None):
         """
-            Returns all iterations in the project.
+            `Returns all iterations in the project.`
+
+            :param only: all_iterations(only = ['iterations 1', 'iterations 2']) -> Only iterations 1 and iterations 2 will be returned.
+            :param exclude: all_iterations(exclude = ['iterations 3']) -> iterations 3 will not be returned.
+            :param only and exclude:  all_iterations(['iterations 1', 'iterations 2', ...], ['iterations 3']) -> The iterations in only will be returned and iterations 3 will not be returned.
         """
         teams = [item['Squad'] for item in self.all_teams()] if not only else only
         remove = [teams.remove(squad) for squad in exclude] if exclude else None
@@ -112,7 +124,11 @@ class Azure:
 
     def all_members(self, only: List[str] = None, exclude: List[str] = None, params_endpoint: str = None):
         """
-            Returns all members in the project.
+            `Returns all members in the project.`
+
+            :param only: all_members(only = ['member 1', 'member 2']) -> Only member 1 and member 2 will be returned.
+            :param exclude: all_members(exclude = ['member 3']) -> member 3 will not be returned.
+            :param only and exclude:  all_members(['member 1', 'member 2', ...], ['member 3']) -> The members in only will be returned and member 3 will not be returned.
         """
         teams = self.all_teams() if not only else [{'Squad': item} for item in only]
         remove = [teams.remove(item) for item in teams if item['Squad'] in exclude] if exclude else None
@@ -130,7 +146,7 @@ class Azure:
     
     def all_items(self, query:str = None, params_endpoint:str = None):
         """
-            Returns all work items in the project. `It is possible to filter by SQL in the query parameter set to None`.
+            `Returns all work items in the project. It is possible to filter by SQL in the query parameter set to None`.
             :param query: SQL statements after FROM WorkItems. Ex: [System.WorkItemType] = 'Task' AND [System.AssignedTo] = 'Guilherme Silva'\
                  \n Returns all tasks associated with Guilherme Silva.
         """
@@ -155,7 +171,7 @@ class Azure:
     
     def all_tags(self):
         """
-            Returns all tags registered in the project.
+            `Returns all tags registered in the project.`
         """
         endpoint = Endpoint.tags(self._organization, self._project)
         response = self.__get(endpoint).json()
@@ -164,35 +180,37 @@ class Azure:
 
     def __mapping_columns(self):
         '''
-            Maps all columns in the project.
+            `Maps all columns in the project.`
         '''
-        all_process = Endpoint.all_process(self._organization)
-        resp_all_process = self.__get(all_process)
-        clean_all_process = Process.all_process(resp_all_process.json()) #[{'id':..., 'name':...}]
-        for process in clean_all_process:
-            project_ref = Endpoint.project_reference(self._organization, process['id'])
-            resp_project = self.__get(project_ref).json()
-            if 'projects' in resp_project:
-                projects = resp_project['projects'] 
-                for project in projects:
-                    if project['name'].replace(' ', '%20') == self._project:
-                        self._process = process['id']
-                        break
-        list_work_items = Endpoint.list_work_item_types(self._organization, self._process)
-        resp_list = self.__get(list_work_items)
-        clean_all_work_items = Process.all_work_items(resp_list.json())
-        for type_id in clean_all_work_items:
-            fields = Endpoint.fields_process(self._organization, self._process, type_id)
-            resp_fields = self.__get(fields)
-            schema = Process.clean_fields(resp_fields.json())
-            self._columns.update(Process.spark_equivalent(schema))
-        print('Ok')
+        try:
+            all_process = Endpoint.all_process(self._organization)
+            resp_all_process = self.__get(all_process)
+            clean_all_process = Process.all_process(resp_all_process.json()) #[{'id':..., 'name':...}]
+            for process in clean_all_process:
+                project_ref = Endpoint.project_reference(self._organization, process['id'])
+                resp_project = self.__get(project_ref).json()
+                if 'projects' in resp_project:
+                    projects = resp_project['projects'] 
+                    for project in projects:
+                        if project['name'].replace(' ', '%20') == self._project:
+                            self._process = process['id']
+                            break
+            list_work_items = Endpoint.list_work_item_types(self._organization, self._process)
+            resp_list = self.__get(list_work_items)
+            clean_all_work_items = Process.all_work_items(resp_list.json())
+            for type_id in clean_all_work_items:
+                fields = Endpoint.fields_process(self._organization, self._process, type_id)
+                resp_fields = self.__get(fields)
+                schema = Process.clean_fields(resp_fields.json())
+                self._columns.update(Process.spark_equivalent(schema))
+            print('Ok')
+        except Exception as e:
+            raise (f'Error in __mapping_columns: {e}')   
 
     def __get_items(self, items: List[str]) -> List[dict]:
         """
-            Get a list of ids and returns a maximum of 200 work items per request.
-            :param items: Uma lista de ids Ex: ['85','86','87',...].
-            :type items: Lista de ids em str, List[str, str, ...].
+            `Get a list of ids and returns a maximum of 200 work items per request.`
+            :param items: A list of ids -> ['85','86','87',...].
         """
         matrix = []
         while True:
@@ -209,9 +227,8 @@ class Azure:
 
     def __max_items(self, slice: List[str]) -> List[dict]:
         """
-            Get assignment of `maximum 200 ids` of work items and returns the corresponding data.
-            :param slice: Uma lista com o tamanho máximo de 200 ids. Ex: ['1','2','3',...,'200'].
-            :type slice: Uma lista de str, List[str, str, ...].
+            `Get assignment of `maximum 200 ids` of work items and returns the corresponding data.`
+            :param slice: A list with a maximum size of 200 ids -> ['1','2','3',...,'200'].
         """
         data = []
         id_list = ",".join(slice)
@@ -232,23 +249,21 @@ class Azure:
 
     def __validade_status(self):
         """
-            Validates access credentials with the platform.
+            `Validates access credentials with the platform.`
         """
-        try:
-            endpoint = Endpoint.build(self._organization, self._project)
-            status = self.__get(endpoint).status_code
-            text = 'Check access data.'
-            http_status = {
-                '302':f'Found.\n{text}',
-                '400':f'Bad Request.\n{text}',
-                '404':f'Not Found.\n{text}'
+        endpoint = Endpoint.build(self._organization, self._project)
+        status = self.__get(endpoint).status_code
+        text = 'Check access data.'
+        http_status = {
+            '302':f'Found.\n{text}',
+            '400':f'Bad Request.\n{text}',
+            '404':f'Not Found.\n{text}'
             }
-            if status == 200:
+        match status:
+            case 200:
                 print('200 - Ok')
                 print('Mapping columns...')
                 self.__mapping_columns()
-            else:
+            case _:
                 err = (f'{status} - {http_status.get(str(status))}')
                 raise Exception(err)
-        except Exception as e:
-            raise e
