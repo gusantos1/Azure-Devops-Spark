@@ -57,8 +57,8 @@ class Azure:
             Ex: 
                 filter_columns( ['AreaPath', 'Id'] ) -> Only AreaPath and Id will be returned.
         '''
-        temp = deepcopy(self._columns)
-        return [self._columns.pop(item) for item in temp.keys() if item not in only]
+        backup_keys = deepcopy(self._columns.keys())
+        return [self._columns.pop(item) for item in backup_keys if item not in only]
       
     def all_backlog(self):
         """
@@ -76,14 +76,16 @@ class Azure:
                         endp_items = Endpoint.backlog_items(self._organization, self._project, squad, id_level)
                         response = self.__get(endp_items).json()
                         if response['workItems']:
-                            id_list = [str(item['target']['id']) for item in response['workItems']]
+                            id_list = array('I', [ item['target']['id'] for item in response['workItems'] ])
                             original = self.__get_items(id_list)
                             for item in original:
                                 item['Backlog'] = level
                             items.extend(original)
         self._columns['Backlog'] = StructField("Backlog", StringType(), True)
         SCHEMA_ITEMS = StructType([column for column in self._columns.values()])
-        return self.spark.createDataFrame(data=[tuple(item.values()) for item in items], schema=SCHEMA_ITEMS)  
+
+        data = [ tuple(item.values()) for item in items ]
+        return self.spark.createDataFrame(data, schema=SCHEMA_ITEMS)  
 
     def all_teams(self, only: List[str] = None, exclude: List[str] = None, params_endpoint:str = None):
         """
@@ -98,7 +100,9 @@ class Azure:
         clean_response = Process.all_teams(response)
         teams = [item for item in clean_response if item['Squad'] in only] if only else clean_response
         remove = [teams.remove(item) for item in teams if item['Squad'] in exclude] if exclude else None
-        return self.spark.createDataFrame(data=[tuple(item.values()) for item in teams], schema=SCHEMA_ALL_TEAMS) 
+
+        data = [ tuple(item.values()) for item in teams ]
+        return self.spark.createDataFrame(data, schema=SCHEMA_ALL_TEAMS) 
 
     def all_iterations(self, only: List[str] = None, exclude: List[str] = None):
         """
@@ -120,7 +124,8 @@ class Azure:
             else:
                 print(f'{squad}: does not exist, or you do not have permission to access it.')
 
-        return self.spark.createDataFrame(data=[tuple(item.values()) for item in iteration_matrix], schema=SCHEMA_ITERATIONS)
+        data = [ tuple(item.values()) for item in iteration_matrix ]
+        return self.spark.createDataFrame(data, schema=SCHEMA_ITERATIONS)
 
     def all_members(self, only: List[str] = None, exclude: List[str] = None, params_endpoint: str = None):
         """
@@ -142,7 +147,9 @@ class Azure:
                 members_matrix.append(clear_response)
 
         members = [member for squad in members_matrix for member in squad]
-        return self.spark.createDataFrame(data=[tuple(item.values()) for item in members], schema=SCHEMA_ALL_MEMBERS)
+        
+        data = [ tuple(item.values()) for item in members ]
+        return self.spark.createDataFrame(data, schema=SCHEMA_ALL_MEMBERS)
     
     def all_items(self, query:str = None, params_endpoint:str = None):
         """
@@ -159,15 +166,17 @@ class Azure:
             endpoint = Endpoint.wiql(self._organization, self._project, params_endpoint)
             response = post(endpoint, headers=self.headers, json=data).json()
             if response['workItems']:
-                id_list = sorted(list({str(item['id']) for item in response['workItems']}))
+                id_list = array('I', [ item['target']['id'] for item in response['workItems'] ])
                 items = self.__get_items(id_list)
                 matrix.extend(items)
                 start = stop + 1 
                 stop += 19999
             else:
                 break
+
         SCHEMA_ITEMS = StructType([column for column in self._columns.values()])
-        return self.spark.createDataFrame(data=[tuple(item.values()) for item in matrix], schema=SCHEMA_ITEMS)
+        data = [ tuple(item.values()) for item in matrix ]
+        return self.spark.createDataFrame(data, schema=SCHEMA_ITEMS)
     
     def all_tags(self):
         """
@@ -176,7 +185,8 @@ class Azure:
         endpoint = Endpoint.tags(self._organization, self._project)
         response = self.__get(endpoint).json()
         clear_response = Process.tags(response)
-        return self.spark.createDataFrame(data=[tuple(item.values()) for item in clear_response], schema=SCHEMA_TAGS)
+        data = [ tuple(item.values()) for item in clear_response ]
+        return self.spark.createDataFrame(data, schema=SCHEMA_TAGS)
 
     def __mapping_columns(self):
         '''
@@ -207,7 +217,7 @@ class Azure:
         except Exception as e:
             raise (f'Error in __mapping_columns: {e}')   
 
-    def __get_items(self, items: List[str]) -> List[dict]:
+    def __get_items(self, items: array[int]) -> List[dict]:
         """
             `Get a list of ids and returns a maximum of 200 work items per request.`
             :param items: A list of ids -> ['85','86','87',...].
@@ -225,19 +235,18 @@ class Azure:
             
         return [item for data in matrix for item in data]
 
-    def __max_items(self, slice: List[str]) -> List[dict]:
+    def __max_items(self, slice: array[int]) -> List[dict]:
         """
             `Get assignment of `maximum 200 ids` of work items and returns the corresponding data.`
-            :param slice: A list with a maximum size of 200 ids -> ['1','2','3',...,'200'].
+            :param slice: An array of unsigned int with a maximum size of 200 ids -> [1, 2, 3,..., 4].
         """
         data = []
-        id_list = ",".join(slice)
+        id_list = ','.join( [ str(item) for item in slice.tolist() ])
         fields = ','.join(self._columns.keys())
         url = Endpoint.work_items(self._organization, self._project, id_list, fields)
         response = self.__get(url).json()
         if 'value' in response:
             len_fields = len(response['value'])
-
             for i in range(0, len_fields):
                 fields = response['value'][i]['fields']
                 clean_response = Process.columns(fields, self._columns, self._fields_displayname)
@@ -253,17 +262,16 @@ class Azure:
         """
         endpoint = Endpoint.build(self._organization, self._project)
         status = self.__get(endpoint).status_code
-        text = 'Check access data.'
         http_status = {
-            '302':f'Found.\n{text}',
-            '400':f'Bad Request.\n{text}',
-            '404':f'Not Found.\n{text}'
+            '302':f'Found.',
+            '400':f'Bad Request.',
+            '404':f'Not Found.',
+            '203':f'No Authorized.'
             }
-        match status:
-            case 200:
-                print('200 - Ok')
-                print('Mapping columns...')
-                self.__mapping_columns()
-            case _:
-                err = (f'{status} - {http_status.get(str(status))}')
-                raise Exception(err)
+        if status == 200:
+            print('200 - Ok')
+            print('Mapping columns...')
+            return self.__mapping_columns()
+        else:
+            err = (f'{status} - {http_status.get(str(status))}')
+            raise Exception(err)

@@ -1,13 +1,11 @@
 Metadata-Version: 2.1
 Name: azure-devops-pyspark
-Version: 0.0.0.0.4
+Version: 0.0.0.0.6
 Summary: A productive library to extract data from Azure Devops and apply agile metrics.
-Home-page: UNKNOWN
 Author: Guilherme Silva dos Santos
 Author-email: gusantos.ok@gmail.com
 License: GNU General Public License v3.0
 Keywords: Azure AzureDevops WorkItems PySpark Agile
-Platform: UNKNOWN
 Description-Content-Type: text/markdown
 License-File: LICENSE.txt
 
@@ -55,6 +53,4 @@ lead_time = lead_time = agile.avg(
     filters={'WorkItemType': 'Task', 'State': 'Closed'} # Custom filters for metric.
 ).df
 ```
-
-
 
