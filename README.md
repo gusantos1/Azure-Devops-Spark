@@ -194,6 +194,10 @@ All public methods of this class return a Detail object containing detail and df
 
 [python-dateutil >= 2.8.2](https://pypi.org/project/python-dateutil/)
 
+[pandas>=1.0.0](https://pypi.org/project/pandas/)
+
+[PyArrow>=5.0.0](https://pypi.org/project/pyarrow/)
+
 ## Author
 
 The Azure-Devops-PySpark library was written by Guilherme Silva < https://www.linkedin.com/in/gusantosdev/ > in 2022.
