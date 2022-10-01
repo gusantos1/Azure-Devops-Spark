@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: azure-devops-pyspark
-Version: 0.0.0.0.23
+Version: 1.0.1
 Summary: A productive library to extract data from Azure Devops and apply agile metrics.
 Home-page: UNKNOWN
 Author: Guilherme Silva dos Santos
@@ -30,7 +30,7 @@ Description:
         df_iterations = devops.all_iterations()
         df_items = devops.all_items()
         df_tags = devops.all_tags()
-        df_backlog = devops.all_backlog() # in manutent
+        df_backlog = devops.all_backlog()
         ```
         
         ```python

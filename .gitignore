@@ -5,3 +5,4 @@ gitignore
 setup.py
 setup.cfg
 dist
+.pypirc
