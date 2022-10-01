@@ -4,3 +4,4 @@ Examples
 gitignore
 setup.py
 setup.cfg
+dist
