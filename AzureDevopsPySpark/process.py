@@ -1,6 +1,13 @@
 from datetime import datetime, date
 from typing import List
-from pyspark.sql.types import *
+from pyspark.sql.types import (
+    BooleanType,
+    DateType,
+    DoubleType,
+    IntegerType,
+    StringType,
+    StructField,
+)
 
 
 class Process:
@@ -35,7 +42,7 @@ class Process:
         return item
 
     @classmethod
-    def all_teams(cls, response: dict) -> List[dict]:
+    def teams(cls, response: dict) -> List[dict]:
         """
         Receives data from all squads and returns `name and id`.
         """

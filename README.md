@@ -13,12 +13,12 @@ It runs on PySpark, enabling all the features the technology makes available.
 
 - All columns of the project are automatically mapped, use the filter_columns method to filter only those you want to form your dataframes with..
 - SparkSession already created in spark variable.
-- Get all your organization's backlogs with the method **all_backlog**.
-- Get all your organization's teams with the method **all_teams**.
-- Get all your organization's iterations with the method **all_iterations**.
-- Get all your organization's members with the method **all_members**.
-- Get all your organization's items with the method **all_items**.
-- Get all your organization's tags with the method **all_tags**.
+- Get all your organization's backlogs with the method **backlog**.
+- Get all your organization's teams with the method **teams**.
+- Get all your organization's iterations with the method **iterations**.
+- Get all your organization's members with the method **members**.
+- Get all your organization's items with the method **items**.
+- Get all your organization's tags with the method **tags**.
 - Explore the simplicity of Agile class to build powerful metrics for your organization.
 
 ## How to install?
@@ -51,10 +51,12 @@ devops.filter_columns([
 
 
 ## Pyspark Dataframe data structure
-df_members = devops.all_members()
-df_backlog = devops.all_backlog()
-df_iterations = devops.all_iterations()
-df_items = devops.all_items()
+df_backlog = devops.backlog()
+df_items = devops.items()
+df_iterations = devops.iterations()
+df_members = devops.members()
+df_tags = devops.tags()
+df_teams = devops.teams()
 ```
 
 ```python
@@ -89,12 +91,12 @@ lead_time = lead_time = agile.avg(
 
 All public methods of this class return an object spark dataframe.
 
-- all_backlog
+- backlog
 
   ###### Returns all backlog work items within a project.
 
   ```python
-  all_backlog(self)
+  backlog(self)
   ```
 
 - filter_columns
@@ -105,44 +107,44 @@ All public methods of this class return an object spark dataframe.
   filter_columns(self, only: List[str])
   ```
 
-- all_iterations
+- iterations
 
   ###### Returns all iterations in the project.
 
   ```python
-  all_iterations(self, only: List[str] = None, exclude: List[str] = None)
+  iterations(self, only: List[str] = None, exclude: List[str] = None)
   ```
 
-- all_items
+- items
 
   ###### Returns all work items in the project. `It is possible to filter by SQL in the query parameter set to None`. Ex: Where [System.WorkItemType] = 'Task' AND [System.AssignedTo] = 'Guilherme Silva'. Returns all tasks associated with Guilherme Silva.
 
   ```python
-  all_items(self, query:str = None, params_endpoint:str = None)
+  items(self, query:str = None, params_endpoint:str = None)
   ```
 
-- all_members
+- members
 
   ###### Returns all members in the project.
 
   ```python
-  all_members(self, only: List[str] = None, exclude: List[str] = None, params_endpoint: str = None)
+  members(self, only: List[str] = None, exclude: List[str] = None, params_endpoint: str = None)
   ```
 
-- all_tags
+- tags
 
   ###### Returns all tags registered in the project.
 
   ```python
-  all_tags(self)
+  tags(self)
   ```
 
-- all_teams
+- teams
 
   ###### Returns all teams registered in the project.
 
   ```python
-  all_teams(self, only: List[str] = None, exclude: List[str] = None, params_endpoint:str = None)	
+  teams(self, only: List[str] = None, exclude: List[str] = None, params_endpoint:str = None)	
   ```
 
 

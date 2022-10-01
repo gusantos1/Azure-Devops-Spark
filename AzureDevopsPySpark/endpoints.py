@@ -41,7 +41,7 @@ class Endpoint:
         return f"https://dev.azure.com/{organization}/{project}/{squad}/_apis/work/teamsettings/iterations/{iteration_id}/workitems/"
 
     @classmethod
-    def all_teams(cls, organization: str, params: str = None) -> str:
+    def teams(cls, organization: str, params: str = None) -> str:
         """
         Get a list of all teams.
         https://docs.microsoft.com/en-us/rest/api/azure/devops/core/teams/get-all-teams?view=azure-devops-rest-7.1&tabs=HTTP
@@ -51,7 +51,7 @@ class Endpoint:
         return f"https://dev.azure.com/{organization}/_apis/teams/"
 
     @classmethod
-    def all_members(
+    def members(
         cls, organization: str, project: str, squad: str, params: str = None
     ) -> str:
         """

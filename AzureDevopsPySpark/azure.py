@@ -66,7 +66,7 @@ class Azure:
         backup_keys = deepcopy(list(self._columns.keys()))
         return [self._columns.pop(item) for item in backup_keys if item not in only]
 
-    def all_backlog(self) -> DataFrame:
+    def backlog(self) -> DataFrame:
         """
         Returns all backlog work items within a project.
         """
@@ -103,7 +103,7 @@ class Azure:
         data = [tuple(item.values()) for item in items]
         return self.spark.createDataFrame(data, schema=SCHEMA_ITEMS)
 
-    def all_teams(
+    def teams(
         self,
         only: List[str] = None,
         exclude: List[str] = None,
@@ -116,9 +116,9 @@ class Azure:
         :param exclude: all_teams(exclude = ['Squad 3']) -> Squad 3 will not be returned.
         :param only and exclude:  all_teams(['Squad 1', 'Squad 2', ...], ['Squad 3']) -> The squads in only will be returned and Squad 3 will not be returned.
         """
-        endpoint = Endpoint.all_teams(self._organization, params_endpoint)
+        endpoint = Endpoint.teams(self._organization, params_endpoint)
         response = self.__get(endpoint).json()
-        clean_response = Process.all_teams(response)
+        clean_response = Process.teams(response)
         teams = (
             [item for item in clean_response if item["Squad"] in only]
             if only
@@ -133,7 +133,7 @@ class Azure:
         data = [tuple(item.values()) for item in teams]
         return self.spark.createDataFrame(data, schema=SCHEMA_ALL_TEAMS)
 
-    def all_iterations(
+    def iterations(
         self,
         only: List[str] = None,
         exclude: List[str] = None,
@@ -142,9 +142,9 @@ class Azure:
         """
         `Returns all iterations in the project.`
 
-        :param only: all_iterations(only = ['iterations 1', 'iterations 2']) -> Only iterations 1 and iterations 2 will be returned.
-        :param exclude: all_iterations(exclude = ['iterations 3']) -> iterations 3 will not be returned.
-        :param only and exclude:  all_iterations(['iterations 1', 'iterations 2', ...], ['iterations 3']) -> The iterations in only will be returned and iterations 3 will not be returned.
+        :param only: iterations(only = ['iterations 1', 'iterations 2']) -> Only iterations 1 and iterations 2 will be returned.
+        :param exclude: iterations(exclude = ['iterations 3']) -> iterations 3 will not be returned.
+        :param only and exclude:  iterations(['iterations 1', 'iterations 2', ...], ['iterations 3']) -> The iterations in only will be returned and iterations 3 will not be returned.
         """
         teams = (
             [item["Squad"] for item in self.all_teams().collect()] if not only else only
@@ -167,7 +167,7 @@ class Azure:
         data = [tuple(item.values()) for item in iteration_matrix]
         return self.spark.createDataFrame(data, schema=SCHEMA_ITERATIONS)
 
-    def all_members(
+    def members(
         self,
         only: List[str] = None,
         exclude: List[str] = None,
@@ -176,9 +176,9 @@ class Azure:
         """
         `Returns all members in the project.`
 
-        :param only: all_members(only = ['member 1', 'member 2']) -> Only member 1 and member 2 will be returned.
-        :param exclude: all_members(exclude = ['member 3']) -> member 3 will not be returned.
-        :param only and exclude:  all_members(['member 1', 'member 2', ...], ['member 3']) -> The members in only will be returned and member 3 will not be returned.
+        :param only: members(only = ['member 1', 'member 2']) -> Only member 1 and member 2 will be returned.
+        :param exclude: members(exclude = ['member 3']) -> member 3 will not be returned.
+        :param only and exclude:  members(['member 1', 'member 2', ...], ['member 3']) -> The members in only will be returned and member 3 will not be returned.
         """
         teams = (
             self.all_teams().collect()
@@ -193,7 +193,7 @@ class Azure:
         members_matrix = []
 
         for squad in teams:
-            url = Endpoint.all_members(
+            url = Endpoint.members(
                 self._organization, self._project, squad["Squad"], params_endpoint
             )
             response = self.__get(url)
@@ -206,7 +206,7 @@ class Azure:
         data = [tuple(item.values()) for item in members]
         return self.spark.createDataFrame(data, schema=SCHEMA_ALL_MEMBERS)
 
-    def all_items(self, query: str = None, params_endpoint: str = None) -> DataFrame:
+    def items(self, query: str = None, params_endpoint: str = None) -> DataFrame:
         """
             `Returns all work items in the project. It is possible to filter by SQL in the query parameter set to None`.
             :param query: SQL statements after FROM WorkItems. Ex: [System.WorkItemType] = 'Task' AND [System.AssignedTo] = 'Guilherme Silva'\
@@ -235,7 +235,7 @@ class Azure:
         data = [tuple(item.values()) for item in matrix]
         return self.spark.createDataFrame(data, schema=SCHEMA_ITEMS)
 
-    def all_tags(self) -> DataFrame:
+    def tags(self) -> DataFrame:
         """
         `Returns all tags registered in the project.`
         """
