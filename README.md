@@ -36,7 +36,7 @@ The code and issue tracker are hosted on GitHub: https://github.com/gusantos1/az
 ## Quick example
 
 ```python
-from AzureDevopsSpark import Azure, Agile
+from AzureDevopsPySpark import Azure, Agile
 from pyspark.sql.functions import datediff #use in agile metrics
 
 devops = Azure('ORGANIZATION', 'PROJECT', 'TOKEN')
