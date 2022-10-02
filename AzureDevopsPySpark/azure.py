@@ -3,7 +3,7 @@ from base64 import b64encode
 from pyspark.sql.types import DateType, IntegerType, StringType, StructField, StructType
 from pyspark.pandas.frame import DataFrame
 from pyspark.sql import SparkSession
-from typing import List
+from typing import List, Dict
 from requests import get, post
 from copy import deepcopy
 from array import array
@@ -56,7 +56,7 @@ class Azure:
     def __repr__(self):
         return f"Organization: {self._organization}\nProject: {self._project}\nToken base64: {self._token}\n{self.headers}"
 
-    def filter_columns(self, only: List[str]) -> List[str, StructField]:
+    def filter_columns(self, only: List[str]) -> Dict[str, StructField]:
         """
         `Mapped columns that are not in the list passed as an argument will be excluded.`
 
@@ -64,14 +64,15 @@ class Azure:
             filter_columns( ['System.AreaPath', 'System.Id'] ) -> Only System.AreaPath and System.Id will be returned.
         """
         backup_keys = deepcopy(list(self._columns.keys()))
-        return [self._columns.pop(item) for item in backup_keys if item not in only]
+        [self._columns.pop(item) for item in backup_keys if item not in only]
+        return self._columns
 
     def backlog(self) -> DataFrame:
         """
         Returns all backlog work items within a project.
         """
         items = []
-        squads = [item["Squad"] for item in self.all_teams().collect()]
+        squads = [item["Squad"] for item in self.teams().collect()]
         for squad in squads:
             endpoint = Endpoint.team_backlog(self._organization, self._project, squad)
             response = self.__get(endpoint)
@@ -112,9 +113,9 @@ class Azure:
         """
         `Returns all teams registered in the project.`
 
-        :param only: all_teams(only = ['Squad 1', 'Squad 2']) -> Only Squad 1 and Squad 2 will be returned.
-        :param exclude: all_teams(exclude = ['Squad 3']) -> Squad 3 will not be returned.
-        :param only and exclude:  all_teams(['Squad 1', 'Squad 2', ...], ['Squad 3']) -> The squads in only will be returned and Squad 3 will not be returned.
+        :param only: teams(only = ['Squad 1', 'Squad 2']) -> Only Squad 1 and Squad 2 will be returned.
+        :param exclude: teams(exclude = ['Squad 3']) -> Squad 3 will not be returned.
+        :param only and exclude:  teams(['Squad 1', 'Squad 2', ...], ['Squad 3']) -> The squads in only will be returned and Squad 3 will not be returned.
         """
         endpoint = Endpoint.teams(self._organization, params_endpoint)
         response = self.__get(endpoint).json()
@@ -147,7 +148,7 @@ class Azure:
         :param only and exclude:  iterations(['iterations 1', 'iterations 2', ...], ['iterations 3']) -> The iterations in only will be returned and iterations 3 will not be returned.
         """
         teams = (
-            [item["Squad"] for item in self.all_teams().collect()] if not only else only
+            [item["Squad"] for item in self.teams().collect()] if not only else only
         )
         remove = [teams.remove(squad) for squad in exclude] if exclude else None
         iteration_matrix = []
@@ -181,7 +182,7 @@ class Azure:
         :param only and exclude:  members(['member 1', 'member 2', ...], ['member 3']) -> The members in only will be returned and member 3 will not be returned.
         """
         teams = (
-            self.all_teams().collect()
+            self.teams().collect()
             if not only
             else [{"Squad": item} for item in only]
         )

@@ -1,12 +1,33 @@
 Metadata-Version: 2.1
 Name: azure-devops-pyspark
-Version: 1.0.3
+Version: 0.0.0.35
 Summary: A productive library to extract data from Azure Devops and apply agile metrics.
 Home-page: UNKNOWN
 Author: Guilherme Silva dos Santos
 Author-email: gusantos.ok@gmail.com
 License: GNU General Public License v3.0
 Description: 
+        ## Azure Devops PySpark:  A productive library to extract data from Azure Devops and apply agile metrics.
+        
+        ## What is it?
+        
+        Azure Devops PySpark is a Python package that provides the most productive way to extract data from Azure Devops and build agile metrics.
+        It runs on PySpark, enabling all the features the technology makes available.
+        
+        ## Main Features
+        
+        - Get authenticated quickly and simply.
+        
+        - All columns of the project are automatically mapped, use the filter_columns method to filter only those you want to form your dataframes with.
+        - SparkSession already created in spark variable.
+        - Get all your organization's backlogs with the method **backlog**.
+        - Get all your organization's items with the method **items**.
+        - Get all your organization's iterations with the method **iterations**.
+        - Get all your organization's members with the method **members**.
+        - Get all your organization's tags with the method **tags**.
+        - Get all your organization's teams with the method **teams**.
+        - Explore the simplicity of Agile class to build powerful metrics for your organization.
+        
         ## Quick example
         
         ```python
@@ -43,7 +64,7 @@ Description:
         ## Metrics
         
         ## Average time between CreatedDate and ClosedDate of items in the last 90 days.
-        lead_time = lead_time = agile.avg(
+        lead_time = agile.avg(
             df=df_agil,
             ref=[datediff, 'ClosedDate', 'CreatedDate'], # The day difference between the CreatedDate and ClosedDate of each item.
             iteration_path='IterationPath', # GroupBy.
@@ -53,6 +74,15 @@ Description:
         ).df
         ```
         
+        ## Author
+        
+        The Azure-Devops-PySpark library was written by Guilherme Silva <<https://www.linkedin.com/in/gusantosdev/>> in 2022.
+        
+        https://github.com/gusantos1/Azure-Devops-Spark
+        
+        ## License
+        
+        GNU General Public License v3.0.
         
 Keywords: Azure AzureDevops WorkItems PySpark Agile
 Platform: UNKNOWN

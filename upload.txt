@@ -1,3 +1,4 @@
 python setup.py sdist
 
 twine upload dist/*
+databricks secrets create-scope --scope main --initial-manage-principal "users"
